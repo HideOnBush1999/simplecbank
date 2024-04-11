@@ -1,0 +1,30 @@
+# version: "2"  # 指定 sqlc 配置文件的版本，确保向后兼容性
+
+# sql:
+#   - schema: "db/migration"  # 指定存放数据库 schema 迁移文件的目录
+#     queries: "db/query"     # 指定存放 SQL 查询文件的目录
+#     engine: "postgresql"    # 指定数据库引擎，这里是 PostgreSQL
+#     gen:
+#       go: 
+#         package: "db"                   # 指定生成的 Go 代码所在的包名
+#         out: "db/sqlc"                  # 指定生成的 Go 代码输出目录
+#         sql_package: "pgx/v5"           # 指定 Go 代码使用的 SQL 驱动包，这里是 pgx 的第 5 版本
+#         emit_json_tags: true            # 是否在生成的 Go 结构体中包含 JSON 标签
+#         emit_interface: true            # 是否生成一个接口，包含所有查询函数
+#         emit_empty_slices: true         # 是否在查询返回空结果时生成空切片（而不是 nil）
+#         overrides:
+#           - db_type: "timestamptz"      # 数据库中的类型
+#             go_type: "time.Time"        # 对应的 Go 类型
+#           - db_type: "uuid"
+#             go_type: "github.com/google/uuid.UUID"  # 指定数据库中 uuid 类型对应的 Go 类型
+version: "1"
+packages:
+  - name: "db"
+    path: "db/sqlc"
+    queries: "db/query"
+    schema: "db/migration"
+    engine: "postgresql"
+    emit_json_tags: true
+    emit_prepared_queries: false
+    emit_interface: false
+    emit_exact_table_names: false
