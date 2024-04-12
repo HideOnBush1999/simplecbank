@@ -97,8 +97,14 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		// 3.update accounts' balance(one for the from account, one for the to account)
 		if arg.FromAccountID < arg.ToAccountID {
 			result.FromAccount, result.ToAccount, err = addMoney(ctx, q, arg.FromAccountID, -arg.Amount, arg.ToAccountID, arg.Amount)
+			if err != nil {
+				return err
+			}
 		} else {
 			result.ToAccount, result.FromAccount, err = addMoney(ctx, q, arg.ToAccountID, arg.Amount, arg.FromAccountID, -arg.Amount)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	})
@@ -115,7 +121,7 @@ func addMoney(
 	amount2 int64,
 ) (account1 Account, account2 Account, err error) {
 	account1, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-		ID: accountID1,
+		ID:     accountID1,
 		Amount: amount1,
 	})
 	if err != nil {
@@ -123,7 +129,7 @@ func addMoney(
 	}
 
 	account2, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-		ID: accountID2,
+		ID:     accountID2,
 		Amount: amount2,
 	})
 	return
