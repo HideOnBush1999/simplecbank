@@ -9,13 +9,13 @@ import (
 // Server serves HTTP requests for our banking service.
 type Server struct {
 	// 允许处理来自客户端的 API 请求时与数据库进行交互
-	store *db.Store
+	store db.Store
 	// 路由器将帮助我们将每个 API 请求发送到正确的处理程序进行处理
 	router *gin.Engine
 }
 
 // NewServer creates a new HTTP server and setup routing.
-func NewServer(store *db.Store) *Server {
+func NewServer(store db.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
 
