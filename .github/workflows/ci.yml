@@ -45,5 +45,8 @@ jobs:
         sudo mv migrate /usr/bin/migrate
         which migrate
 
+    - name: Run migrations
+      run: make migrateup
+
     - name: Test
       run: make test
