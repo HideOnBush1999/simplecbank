@@ -1,7 +1,10 @@
 package api
 
 import (
+	"fmt"
 	db "simplebank/db/sqlc"
+	"simplebank/token"
+	"simplebank/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -13,18 +16,38 @@ type Server struct {
 	// 允许处理来自客户端的 API 请求时与数据库进行交互
 	store db.Store
 	// 路由器将帮助我们将每个 API 请求发送到正确的处理程序进行处理
-	router *gin.Engine
+	router     *gin.Engine
+	tokenMaker token.Maker
+	config     util.Config
 }
 
 // NewServer creates a new HTTP server and setup routing.
-func NewServer(store db.Store) *Server {
-	server := &Server{store: store}
+func NewServer(config util.Config, store db.Store) (*Server, error) {
+	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create token maker: %w", err)
+	}
+	server := &Server{
+		config:     config,
+		store:      store,
+		tokenMaker: tokenMaker,
+	}
+
+	// add custom validation function
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("currency", validCurrency)
+	}
+
+	server.setupRoutes()
+
+	return server, nil
+}
+
+func (server *Server) setupRoutes() {
 	router := gin.Default()
 
-	if  v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("currency", validCurrency)   // add custom validation function
-	}
 	router.POST("/users", server.createUser)
+	router.POST("/users/login", server.loginUser)
 
 	router.POST("/accounts", server.createAccount)
 	router.GET("/accounts/:id", server.getAccount)
@@ -35,7 +58,6 @@ func NewServer(store db.Store) *Server {
 	router.POST("/transfers", server.createTransfer)
 
 	server.router = router
-	return server
 }
 
 // Start runs the HTTP server on a specific address.
