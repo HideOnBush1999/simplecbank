@@ -19,9 +19,10 @@ FOR NO KEY UPDATE;
 
 -- name: ListAccounts :many
 SELECT * FROM accounts
+WHERE owner = $1
 ORDER BY id
-LIMIT $1
-OFFSET $2;
+LIMIT $2
+OFFSET $3;
 
 
 -- name: UpdateAccount :one
@@ -41,3 +42,7 @@ RETURNING *;
 -- name: DeleteAccount :exec
 DELETE FROM accounts
 WHERE id = $1;
+
+-- name: GetAccountOwnerByID :one
+SELECT owner FROM accounts
+WHERE id = $1 LIMIT 1;

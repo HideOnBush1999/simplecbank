@@ -49,13 +49,16 @@ func (server *Server) setupRoutes() {
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
 
-	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.listAccount)
-	router.PATCH("/accounts", server.updateAccount)
-	router.DELETE("/accounts/:id", server.deleteAccount)
+	// TODO：看懂下面这行代码
+	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 
-	router.POST("/transfers", server.createTransfer)
+	authRoutes.POST("/accounts", server.createAccount)
+	authRoutes.GET("/accounts/:id", server.getAccount)
+	authRoutes.GET("/accounts", server.listAccount)
+	// authRoutes.PATCH("/accounts", server.updateAccount)
+	// authRoutes.DELETE("/accounts/:id", server.deleteAccount)
+
+	authRoutes.POST("/transfers", server.createTransfer)
 
 	server.router = router
 }
