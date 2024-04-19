@@ -48,8 +48,10 @@ func (server *Server) setupRoutes() {
 
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
+	router.POST("tokens/renew_access", server.renewAccessToken)
 
-	// TODO：看懂下面这行代码
+	// 设置了一个从根路径开始的路由组
+	// 所有这个组中的路由都会先通过 authMiddleware 进行身份验证处理
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 
 	authRoutes.POST("/accounts", server.createAccount)
