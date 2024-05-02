@@ -16,7 +16,7 @@ type VerifyEmailTxResult struct {
 }
 
 // 1. 将 verify_email 表中对应的记录 is_used字段更新为 true
-// 2. 将 user 表中对应的记录 is_email_verified字段更新为 true
+// 2. 将 user 表中对应的记录 is_email_verified 字段更新为 true
 func (store *SQLStore) VerifyEmailTx(ctx context.Context, arg VerifyEmailTxParams) (VerifyEmailTxResult, error) {
 	var result VerifyEmailTxResult
 
