@@ -62,7 +62,7 @@ func TestUpdateUserAPI(t *testing.T) {
 					Return(updatedUser, nil)
 			},
 			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-				return newContextWithBearerToken(t, tokenMaker, user.Username, time.Minute)
+				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute)
 			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.NoError(t, err)
